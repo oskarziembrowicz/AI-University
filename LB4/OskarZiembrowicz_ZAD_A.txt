@@ -1,0 +1,13 @@
+dlugoscListy(0,[]).
+dlugoscListy(DlListy,[Glowa|Ogon]) :- dlugoscListy(DlOgona, Ogon),DlListy is DlOgona+1.
+
+sumaListy(0,[]).
+sumaListy(Suma, [Glowa|Ogon]) :- sumaListy(SumaOgona, Ogon), Suma is SumaOgona+Glowa.
+
+sredniaListy(0, []).
+sredniaListy(Srednia, Lista) :- sumaListy(Suma, Lista), dlugoscListy(Dlugosc, Lista), Srednia is Suma/Dlugosc.
+
+-------------------------------------------------
+sredniaListy(Sr, [2, 4, 6, 8]).
+==================================
+Sr = 5.

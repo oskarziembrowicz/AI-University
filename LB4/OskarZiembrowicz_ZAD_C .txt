@@ -1,0 +1,53 @@
+kobieta(anna).
+kobieta(wiktoria).
+kobieta(irena).
+kobieta(zofia).
+kobieta(ewa).
+kobieta(gabriela).
+kobieta(barbara).
+kobieta(marta).
+
+mezczyzna(X) :- \+ kobieta(X).
+
+syn(kamil, piotr, anna).
+syn(dawid, piotr, anna).
+syn(jan, tadeusz, irena).
+syn(roman, stefan, gabriela).
+syn(henryk, stefan, gebriela).
+syn(marian, roman, barbara).
+syn(marek, roman, barbara).
+syn(adam, henryk, marta).
+
+corka(wiktoria, piotr, anna).
+corka(anna, jan, zofia).
+corka(ewa, jan, zofia).
+corka(zofia, roman, barbara).
+
+%dodatkowe:
+corka(kasia, tadeusz, anna).
+%pomocnicze:
+dziecko(Dziecko, Ojciec, Matka) :- syn(Dziecko, Ojciec, Matka); corka(Dziecko, Ojciec, Matka).
+
+ojciec(Ojciec, Dziecko) :- dziecko(Dziecko, Ojciec, _).
+matka(Matka, Dziecko) :- dziecko(Dziecko, _, Matka).
+rodzic(Rodzic, Dziecko) :- ojciec(Rodzic, Dziecko); matka(Rodzic, Dziecko).
+
+babcia(Babcia, Wnuk) :- matka(Babcia, Rodzic), rodzic(Rodzic, Wnuk).
+dziadek(Dziadek, Wnuk) :- ojciec(Dziadek, Rodzic), rodzic(Rodzic, Wnuk).
+
+rodzenstwo(X, Y) :- rodzic(Rodzic, X), rodzic(Rodzic, Y).
+
+wuj(X, Y) :- rodzenstwo(X, Rodzic), rodzic(Rodzic, Y), mezczyzna(X).
+ciotka(X, Y) :- rodzenstwo(X, Rodzic), rodzic(Rodzic, Y), kobieta(X).
+
+kuzyni(X, Y) :- rodzic(Rodz1, X), rodzic(Rodz2, Y), rodzenstwo(Rodz1, Rodz2).
+kuzyn(X, Y) :- kuzyni(X, Y), mezczyzna(X).
+kuzynka(X, Y) :- kuzyni(X, Y), kobieta(X).
+
+swatowie(X, Y) :- dziecko(_, X, Y).
+
+rodzenstwo_przyrodnie(X, Y) :- ((dziecko(X, Ojciec, _), dziecko(Y, Ojciec, _)) ; (dziecko(X, _, Matka), dziecko(Y, _, Matka))), \+ rodzenstwo(X, Y).
+rodzic_przyrodni(X, Y) :- \+ rodzic(X, Y), rodzenstwo_przyrodnie(Y, Rodze), rodzic(X, Rodze).
+
+szwagier(X, Y) :- mezczyzna(X), swatowie(X, Zona), rodzenstwo(Zona, Y).
+szwagierka(X, Y) :- kobieta(X), swatowie(Monz, X), rodzenstwo(Monz, Y).

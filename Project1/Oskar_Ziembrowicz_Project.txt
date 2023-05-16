@@ -1,0 +1,28 @@
+drzwi(salon,kuchnia).
+drzwi(salon,oranzeria).
+drzwi(kuchnia,sypialnia).
+drzwi(korytarz,piwnica).
+drzwi(ubikacja,piwnica).
+drzwi(korytarz,ubikacja).
+drzwi(kuchnia,korytarz).
+drzwi(oranzeria,lazienka).
+
+klucz(salon,klucz_duzy).
+klucz(oranzeria,klucz_maly).
+klucz(korytarz,klucz_z_sercem).
+
+otwiera(ubikacja,klucz_maly).
+otwiera(oranzeria,klucz_z_sercem).
+
+wyjscie(oranzeria).
+
+przejscie(From, To, Klucz) :- (drzwi(From, To) ; drzwi(To, From)) , (otwiera(To,_) ->  otwiera(To, Klucz) ; true).
+% sprawdź czy między dwoma pokojami są drzwi I (JEŚLI docelowy pokój otwiera się kluczem TO sprawdź czy mamy właściwy klucz W PRZECIWNYM RAZIE zwróć true)
+
+szukaj_pokoju(X, Y, T, Pokoj_z_kluczem, Klucz, Lista_kluczy) :- (wyjscie(X) ->  (write([znaleziono_wyjscie]),nl)) ; przejscie(X,Z,Klucz),\+member(Z, T),((write([przechodze_z,X,do,Z]),nl,(otwiera(Z, Klucz) -> szukaj_klucza(Z,Y,[],Pokoj_z_kluczem, Klucz, Lista_kluczy) ; szukaj_pokoju(Z,Y,[Z|T],Pokoj_z_kluczem,Klucz,Lista_kluczy))); (write([wychodze_z,Z]),nl,szukaj_pokoju(X,Y,[Z|T],Pokoj_z_kluczem,Klucz, Lista_kluczy))).
+% jeśli znajdujemy się na wyjściu to oznaczamy to i zwracamy true LUB sprawdź czy da się przejść I czy pokój był odwiedzony I ((ogłosić przejście I (JEŚLI przechodzimy z pomocą klucza TO szukaj klucza od następnego pokoju W PRZECIWNYM RAZIE szukaj pokoju dalej)) LUB (ogłoś cofnięcie I szukaj pokoju dalej z tego miejsca))
+
+szukaj_klucza(X, Y, T, Pokoj_z_kluczem, Klucz, Lista_kluczy) :- (wyjscie(X) ->  (write([znaleziono_wyjscie]),nl)) ; przejscie(X,Z,Klucz),\+member(Z, T),((klucz(X, Jakis_klucz), \+member(Jakis_klucz, Lista_kluczy)) -> (write([znalazlem_klucz,Jakis_klucz]),nl,(szukaj_pokoju(X,Y,[X], X, Jakis_klucz, [Jakis_klucz|Lista_kluczy]) ; szukaj_klucza(Z,Y,[Z|T], Pokoj_z_kluczem, Klucz, Lista_kluczy))) ; ((write([przechodze_z,X,do,Z]),nl,szukaj_klucza(Z,Y,[Z|T], Pokoj_z_kluczem, Klucz, Lista_kluczy)) ; (write([wychodze_z,Z]),nl, szukaj_klucza(X,Y,[Z|T], Pokoj_z_kluczem, Klucz, Lista_kluczy)))).
+% jeśli znajdujemy się na wyjściu to oznaczamy to i zwracamy true LUB sprawdź czy da się przejść I czy pokój był odwiedzony I (JEŚLI w aktualnym pokoju jest klucz, który nie był jeszcze podniesiony TO (ogłoś znalezienie I (szukaj pokoju od tego miejsca dodając klucz do listy LUB w razie niepowodzenia szukaj kluczy dalej)) W PRZECIWNYM RAZIE ((ogłoś przejście I szukaj klucza dalej) LUB (ogłoś cofnięcie I szukaj_klucza dalej z tego pokoju)))
+
+szukaj_wyjscia(Pokoj_poczatkowy, Pokoj_z_kluczem, Klucz, Pokoj_z_wyjsciem) :- szukaj_klucza(Pokoj_poczatkowy, Pokoj_z_wyjsciem, [], Pokoj_z_kluczem, Klucz, []), wyjscie(Pokoj_z_wyjsciem), otwiera(Pokoj_z_wyjsciem, Klucz), klucz(Pokoj_z_kluczem, Klucz).
