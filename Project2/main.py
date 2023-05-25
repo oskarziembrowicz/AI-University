@@ -71,13 +71,19 @@ class SLP(object):
 
 
     def predict(self, X):
-        # for i in range(len(X)):
-        #     print(self.perceptrons[i].predict_function(X[i]))
-        for per in self.perceptrons:
-            print(per.predict_function(X))
-        # print()
+        result = np.array([[0 for _ in range(len(X))] for _ in range(len(X))])
+        for i in range(len(X)):
+            result[i] = self.perceptrons[i].predict_function(X)
+            # print(self.perceptrons[i].predict_function(X))
+        return result
 
-    # def misclassified(self, X):
+    def misclassified(self, X, y):
+        # compare results of predict and y
+        counter = 0
+        for i in range(len(X)):
+            if not (self.predict(X)[i]==y[i]).all():
+                counter += 1
+        return counter
 
     def show(self, X):
         for i in X:
@@ -112,11 +118,11 @@ net.show(X)
 
 net.fit(X, y)
 
-net.predict(X)
+print(net.predict(X))
 
 print(net.errors_)
 
-
+print(net.misclassified(X, y))
 
 
 
