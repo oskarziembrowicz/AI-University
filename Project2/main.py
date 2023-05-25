@@ -58,21 +58,24 @@ class SLP(object):
         self.eta = eta
         self.n_iter = n_iter
         self.random_state = 1
-        # self.ppn = []
 
     def fit(self, X, y):
         #utworzyć 10 perceptronów - po jednym dla każdej litery
-        self.ppn = np.zeros(10,10)
-        for i in X:
-            self.ppn[i] = Perceptron(self.eta, self.n_iter, self.random_state)
-            self.ppn[i].fit(X[i], y[i]);
-        # self.ppn = np.array(self.ppn)
+        self.perceptrons = np.array([Perceptron(self.eta, self.n_iter, self.random_state) for _ in range(len(X))])
+        self.errors_ = [0 for _ in range(len(X))]
+        for i in range(len(X)):
+            self.perceptrons[i].fit(X, y[i])
+            self.errors_ = list(map(sum,zip(self.errors_, self.perceptrons[i].number_of_errors)))
+            # print(self.errors_)
+
+
 
     def predict(self, X):
-        # array = np.zeros(shape=(10,10))
-        for i in X:
-            print(self.ppn[i].predict_function(X[i]))
-        # return array
+        # for i in range(len(X)):
+        #     print(self.perceptrons[i].predict_function(X[i]))
+        for per in self.perceptrons:
+            print(per.predict_function(X))
+        # print()
 
     # def misclassified(self, X):
 
@@ -82,7 +85,6 @@ class SLP(object):
             matrix = np.where(matrix == -1, 0, matrix)
             plt.imshow(matrix, cmap="Greys")
             # plt.show()
-        # plt.tight_layout()
         plt.show()
 
 # code: 1 5 8 9 10 11 13 14 17 21
@@ -98,14 +100,25 @@ df = pd.read_csv('letters.data',
                  header=None,
                  encoding='utf-8')
 
-X = df.iloc[[1,5,8,9,10,11,13,14,17,21], :35].values
-y = df.iloc[[1,5,8,9,10,11,13,14,17,21], 35:].values
+# my set: 1,5,8,9,10,11,13,14,17,21
+# test set: 10,11,12,13,14,15,16,17,18,19
+
+X = df.iloc[[10,11,12,13,14,15,16,17,18,19], :35].values
+# y = df.iloc[[1,5,8,9,10,11,13,14,17,21], 35:].values
+y = np.array([[-1 for _ in range(10)] for _ in range(10)])
+np.fill_diagonal(y, 1)
 
 net.show(X)
 
 net.fit(X, y)
 
-# print(net.predict(X))
+net.predict(X)
+
+print(net.errors_)
+
+
+
+
 
 # %matplotlib inline
 # import matplotlib.pyplot as plt
