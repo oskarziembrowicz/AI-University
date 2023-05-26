@@ -35,11 +35,9 @@ class Perceptron(object):
         for _ in range(self.number_of_iterations):
             errors = 0
             for xi, target in zip(X, y):
-                # print(xi)
                 update = self.learning_parameter * (target - self.predict_function(xi))
                 self.wages[1:] += update * xi
                 self.wages[0] += update * 1
-                # (self.wages[0:])
                 errors += int(update != 0.0)
             self.number_of_errors.append(errors)
         return self
@@ -79,14 +77,14 @@ class SLP(object):
         # compare results of predict and y
         counter = 0
         for i in range(len(X)):
-            if not (self.predict(X)[i]==y[i]).all():
-                counter += 1
+            counter += np.sum(self.predict(X)[i] != y[i])
         return counter
 
     def show(self, X):
-        for i in X:
-            matrix = np.reshape(i, (7, 5))
+        for i in range(len(X)):
+            matrix = np.reshape(X[i], (7, 5))
             matrix = np.where(matrix == -1, 0, matrix)
+            plt.subplot(2, 5, i+1)
             plt.imshow(matrix, cmap="Greys")
             # plt.show()
         plt.show()
