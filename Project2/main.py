@@ -68,8 +68,6 @@ class SLP(object):
             self.errors_ = list(map(sum,zip(self.errors_, self.perceptrons[i].number_of_errors)))
             # print(self.errors_)
 
-
-
     def predict(self, X):
         result = np.array([[0 for _ in range(len(X))] for _ in range(len(X))])
         for i in range(len(X)):
@@ -92,6 +90,18 @@ class SLP(object):
             plt.imshow(matrix, cmap="Greys")
             # plt.show()
         plt.show()
+
+def damage(X, percent, seed=1):
+    rgen = np.random.RandomState(seed)
+    result = np.array(X)
+    count = int(X.shape[1] * percent/100)
+
+    for index_example in range(len(X)):
+        order = np.sort(rgen.choice(X.shape[1], count, replace=False))
+        for index_pixel in order:
+            result[index_example][index_pixel] *= -1
+    return result
+
 
 # code: 1 5 8 9 10 11 13 14 17 21
 net = SLP()
@@ -124,26 +134,21 @@ print(net.errors_)
 
 print(net.misclassified(X, y))
 
+damaged5 = damage(X, 5)
+damaged15 = damage(X, 15)
+damaged40 = damage(X, 40)
 
+# 5% damaged:
+net.show(damaged5)
+print(net.predict(damaged5))
+print(net.misclassified(damaged5, y))
 
-# %matplotlib inline
-# import matplotlib.pyplot as plt
-# import os
+# 15% damaged:
+net.show(damaged15)
+print(net.predict(damaged15))
+print(net.misclassified(damaged15, y))
 
-# y = df.iloc[0:100, 4].values
-# y = np.where(y == 'Iris-setosa', -1, 1)
-# X = df.iloc[0:100, [0, 2]].values
-
-# plt.scatter(X[:50, 0], X[:50, 1], color='red', marker='o', label='setosa')
-# plt.scatter(X[50:100, 0], X[50:100, 1], color='blue', marker='x', label='versicolor')
-# plt.xlabel('sepal length [cm]')
-# plt.ylabel('petal length [cm]')
-# plt.legend(loc='upper left')
-# plt.show()
-
-# ppn = Perceptron(learning_parameter=0.1, number_of_iterations=10)
-# ppn.fit(X, y)
-# plt.plot(range(0, len(ppn.number_of_errors) ), ppn.number_of_errors, marker='o')
-# plt.xlabel('Epochs')
-# plt.ylabel('Number of updates')
-# plt.show()
+# 40% damaged:
+net.show(damaged40)
+print(net.predict(damaged40))
+print(net.misclassified(damaged40, y))
