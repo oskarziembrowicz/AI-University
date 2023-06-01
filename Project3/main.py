@@ -12,7 +12,7 @@ class Chromosom(object):
     def __str__(self):
         return self.wages + " : " + str(self.diff)
 
-
+import random
 class Evolution(object):
     def __init__(self, target, entry_data):
         self.target = target
@@ -20,19 +20,24 @@ class Evolution(object):
         self.chromosom_size = 9
         # self.chars = string.ascii_letters + string.digits + string.punctuation
         self.chromosoms_list = np.array(
-            [Chromosom(wages=np.array([random.choice(range(10)) for _ in range(self.chromosom_size)]), diff=450)
-             for _ in range(100)])  # zmienić range
+            [Chromosom(wages=np.array([random.choice(np.arange(-10.0, 10.0, 0.5)) for _ in range(self.chromosom_size)]), diff=450)
+             for _ in range(100)])
 
     def start_evolution(self, number_of_generations):
-        for _ in range(number_of_generations):
+        self.differeces_list = np.array([450 for _ in range(number_of_generations)])
+        for i in range(number_of_generations):
             # ---1GENERATION---
             self.count_differences()
             # print(self.chromosoms_list[i].diff)
 
             self.chromosoms_list = sorted(self.chromosoms_list, key=lambda x: x.diff)
+            # print(self.chromosoms_list[0].diff)
+            self.differeces_list[i] = self.chromosoms_list[0].diff
+            if self.chromosoms_list[0].diff == 0:
+                return
             # print(self.chromosoms_list)
             self.next_chromosoms_generation = np.array(
-                [Chromosom(wages=np.array([0 for _ in self.chromosom_size]), diff=450) for _ in range(100)])
+                [Chromosom(wages=np.array([0 for _ in range(self.chromosom_size)]), diff=450) for _ in range(100)])
             self.next_chromosoms_generation[:10] = self.chromosoms_list[:10]
             for chrom in self.next_chromosoms_generation[10:]:
                 # for each chromosome(after first 10)
@@ -46,7 +51,7 @@ class Evolution(object):
                     elif rand < 0.9:
                         chrom.wages[i] = mommy.wages[i]
                     else:
-                        chrom.wages[i] = np.random.choice(range(10))  # zmienić range
+                        chrom.wages[i] = random.choice(np.arange(-10.0, 10.0, 0.5))
             # print(self.next_chromosoms_generation[:10])
             self.chromosoms_list = self.next_chromosoms_generation
 
@@ -57,30 +62,25 @@ class Evolution(object):
     def count_differences(self):
         for i in range(100):
             wages = self.chromosoms_list[i].wages
-            counter = 0
+            self.chromosoms_list[i].diff = self.predict(wages)
 
-            for j in range(150):
-                enter = self.entry_data[j]  # - dane wejściowe
-                # enter należy podać na trzy neurony
-                n1_input = np.array([enter[0] * wages[0], enter[1] * wages[1], wages[2]])
-                n2_input = np.array([enter[0] * wages[3], enter[1] * wages[4], wages[5]])
-                n3_input = np.array([enter[0] * wages[6], enter[1] * wages[7], wages[8]])
-                n1_output = np.where(sum(n1_input) >= 0.0, 1, -1)  # zamień na if
-                n2_output = np.where(sum(n2_input) >= 0.0, 1, -1)
-                n3_output = np.where(sum(n3_input) >= 0.0, 1, -1)
-                output = np.array([n1_output, n2_output, n3_output])
-                # porównaj output z target i różnice dodaj do counter
-                counter += np.sum(output == self.target[j])
+    def predict(self, wages):
+        counter = 0
+        for j in range(150):
+            enter = self.entry_data[j]  # - dane wejściowe
+            # enter należy podać na trzy neurony
+            n1_input = np.array([enter[0] * wages[0], enter[1] * wages[1], wages[2]])
+            n2_input = np.array([enter[0] * wages[3], enter[1] * wages[4], wages[5]])
+            n3_input = np.array([enter[0] * wages[6], enter[1] * wages[7], wages[8]])
 
-            self.chromosoms_list[i].diff = counter
+            n1_output = np.where(sum(n1_input) >= 0.0, 1, -1)
+            n2_output = np.where(sum(n2_input) >= 0.0, 1, -1)
+            n3_output = np.where(sum(n3_input) >= 0.0, 1, -1)
 
-    # def predict(self, X):
-    # return np.where(self.net_input(X) >= 0.0, 1, -1)
-
-    # def number_of_differences(self, chromosom):
-    #     counter = 0
-    #     # 
-    #     return counter
+            output = np.array([n1_output, n2_output, n3_output])
+            # print(output)
+            counter += np.sum(output == self.target[j])
+        return counter
 
 import pandas as pd
 s = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
@@ -106,4 +106,13 @@ plt.scatter(X[100:, 0], X[100:, 1], color='green', marker='*', label='virginica'
 plt.xlabel('sepal length [cm]')
 plt.ylabel('petal length [cm]')
 plt.legend(loc='upper left')
+plt.show()
+
+evo = Evolution(y, X)
+generations = 150
+evo.start_evolution(generations)
+
+plt.plot(range(generations), evo.differeces_list)
+plt.xlabel('Generations')
+plt.ylabel('Errors')
 plt.show()
