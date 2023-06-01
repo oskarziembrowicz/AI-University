@@ -1,7 +1,6 @@
 import numpy as np
 import random
 
-
 class Chromosom(object):
     def __init__(self, wages, diff):
         self.wages = wages
@@ -21,9 +20,8 @@ class Evolution(object):
         self.chromosom_size = 9
         # self.chars = string.ascii_letters + string.digits + string.punctuation
         self.chromosoms_list = np.array(
-            [Chromosom(wages=np.array([random.choice(range(10)) for _ in range(self.chromosom_size)]), diff=450) for _
-             in
-             range(100)])  # zmienić range
+            [Chromosom(wages=np.array([random.choice(range(10)) for _ in range(self.chromosom_size)]), diff=450)
+             for _ in range(100)])  # zmienić range
 
     def start_evolution(self, number_of_generations):
         for _ in range(number_of_generations):
@@ -37,11 +35,11 @@ class Evolution(object):
                 [Chromosom(wages=np.array([0 for _ in self.chromosom_size]), diff=450) for _ in range(100)])
             self.next_chromosoms_generation[:10] = self.chromosoms_list[:10]
             for chrom in self.next_chromosoms_generation[10:]:
-                # for each element(after first 10)
+                # for each chromosome(after first 10)
                 daddy = np.random.choice(self.chromosoms_list[:50])
                 mommy = np.random.choice(self.chromosoms_list[:50])
                 for i in range(self.chromosom_size):
-                    # for each letter
+                    # for each element
                     rand = np.random.random()
                     if rand < 0.45:
                         chrom.wages[i] = daddy.wages[i]
@@ -84,4 +82,28 @@ class Evolution(object):
     #     # 
     #     return counter
 
-# y = [[1, -1, -1]...[-1, 1, -1]...[-1, -1, 1]] size = 150
+import pandas as pd
+s = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+df = pd.read_csv(s, header=None, encoding='utf-8')
+
+# y = df.iloc[0:, 4].values
+# y = np.array([[1, -1, -1] for x in y if x == 'Iris-setosa' elif x == 'Iris-versicolor'])
+y1 = np.array([[1, -1, -1] for _ in range(50)])
+y2 = np.array([[-1, 1, -1] for _ in range(50)])
+y3 = np.array([[-1, -1, 1] for _ in range(50)])
+y = np.concatenate((y1, y2, y3))
+# print(y)
+
+X = df.iloc[0:, [0,2]].values
+X[100:] = np.array([x+2 for x in X[100:]])
+
+import matplotlib.pyplot as plt
+
+plt.scatter(X[:50, 0], X[:50, 1], color='red', marker='o', label='setosa')
+plt.scatter(X[50:100, 0], X[50:100, 1], color='blue', marker='x', label='versicolor')
+plt.scatter(X[100:, 0], X[100:, 1], color='green', marker='*', label='virginica')
+
+plt.xlabel('sepal length [cm]')
+plt.ylabel('petal length [cm]')
+plt.legend(loc='upper left')
+plt.show()

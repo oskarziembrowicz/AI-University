@@ -73,6 +73,7 @@ y1 = np.where(y == 'Iris-setosa', -1, 1)
 y2 = np.where(y == 'Iris-versicolor', -1, 1)
 y3 = np.where(y == 'Iris-virginica', -1, 1)
 X = df.iloc[0:, [0,2]].values
+X[100:] = np.array([x+2 for x in X[100:]])
 
 #=================================================================================
 #plot points
