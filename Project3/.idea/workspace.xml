@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="25d5a8a6-9eae-40d0-a451-02317e0063be" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ver1.py" beforeDir="false" afterPath="$PROJECT_DIR$/ver1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ver2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ver2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ver3.py" beforeDir="false" afterPath="$PROJECT_DIR$/ver3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +46,7 @@
       <recent name="C:\Repositories\AI-University\Project3" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ver1">
+  <component name="RunManager" selected="Python.ver3">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Project3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -130,9 +133,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ver1" />
         <item itemvalue="Python.ver3" />
         <item itemvalue="Python.ver2" />
+        <item itemvalue="Python.ver1" />
       </list>
     </recent_temporary>
   </component>
