@@ -11,7 +11,10 @@ class Perceptron(object):
         rgen = np.random.RandomState(self.random_seed)
         self.wages = rgen.normal(loc=0.0, scale=0.01, size=1 + X.shape[1])
 
-        for _ in range(self.number_of_iterations):
+        self.saved_weights = np.zeros((self.number_of_iterations + 1, len(self.wages)))
+        self.saved_weights[0, :] = self.wages
+
+        for i in range(self.number_of_iterations):
             errors = 0
             for xi, target in zip(X, y):
                 # print(xi)
@@ -21,6 +24,7 @@ class Perceptron(object):
                 # print(self.wages[0:])
                 errors += int(update != 0.0)
             self.number_of_errors.append(errors)
+            self.saved_weights[i + 1, :] = self.wages
         # for i in range(0,4):
         # print(self.predict_function(X[i]))
         return self
@@ -111,4 +115,13 @@ plt.plot(range(0, len(ppn3.number_of_errors)), ppn3.number_of_errors, marker='o'
 plt.xlabel('Epochs')
 plt.ylabel('Number of updates')
 plt.legend(loc='lower left')
+plt.show()
+
+plt.plot(range(0, ppn1.saved_weights.shape[0]), ppn1.saved_weights[:,0], label="w0", color="red")
+plt.plot(range(0, ppn1.saved_weights.shape[0]), ppn1.saved_weights[:,1], label="w1", color="green")
+plt.plot(range(0, ppn1.saved_weights.shape[0]), ppn1.saved_weights[:,2], label="w2", color="blue")
+# plt.plot(range(0, ppn1.saved_weights.shape[0]), ppn1.saved_weights[:,3], label="w3", color="yellow")
+plt.xlabel("Changes")
+plt.ylabel("Weights")
+plt.legend(loc="lower left")
 plt.show()
